@@ -11,10 +11,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    public mixed $name;
-    public mixed $email;
-    public mixed $password;
-
 
     /**
      * The attributes that are mass assignable.

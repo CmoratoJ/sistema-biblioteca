@@ -4,6 +4,7 @@ namespace App\Http\Repositories;
 
 use App\Http\Repositories\Interface\IUserRepository;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class UserRepository implements IUserRepository
 {
@@ -14,12 +15,12 @@ class UserRepository implements IUserRepository
         return $user;
     }
 
-    public function findById(int $id): object
+    public function findById(int $id): User
     {
         return User::find($id);
     }
 
-    public function findAll(): object
+    public function findAll(): Collection
     {
         return User::all();
     }

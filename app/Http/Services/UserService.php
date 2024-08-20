@@ -5,7 +5,11 @@ namespace App\Http\Services;
 use App\Http\Repositories\Interface\IUserRepository;
 use App\Http\Requests\CreateOrUpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 
 class UserService
 {
@@ -15,46 +19,99 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function create(CreateOrUpdateUserRequest $request): UserResource
+    public function create(CreateOrUpdateUserRequest $request): JsonResponse
     {
-        $user = new User();
-        $user->name = $request->get('name');
-        $user->email = $request->get('email');
-        $user->password = bcrypt($request->get('password'));
+        try {
+            $user = new User();
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            $user->password = bcrypt($request->get('password'));
 
-        $this->userRepository->persist($user);
+            $this->userRepository->persist($user);
 
-        return new UserResource($user);
+            return ApiResponse::success(
+                new UserResource($user),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
+
     }
 
     public function findAll(): object
     {
-        $users = $this->userRepository->findAll();
-        return UserResource::collection($users);
+        try {
+            $users = $this->userRepository->findAll();
+            return ApiResponse::success(
+                UserResource::collection($users),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     public function findById(int $id): object
     {
-        $user = $this->userRepository->findById($id);
-        return new UserResource($user);
+        try {
+            $user = $this->userRepository->findById($id);
+            return  ApiResponse::success(
+                new UserResource($user),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
+
     }
 
-    public function update(CreateOrUpdateUserRequest $request, int $id): UserResource
+    public function update(CreateOrUpdateUserRequest $request, int $id): JsonResponse
     {
-        $user = $this->userRepository->findById($id);
+        try {
+            $user = $this->userRepository->findById($id);
 
-        $user->name = $request->get('name');
-        $user->email = $request->get('email');
-        $user->password = bcrypt($request->get('password'));
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            $user->password = bcrypt($request->get('password'));
 
-        $this->userRepository->persist($user);
+            $this->userRepository->persist($user);
 
-        return new UserResource($user);
+            return ApiResponse::success(
+                new UserResource($user),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): JsonResponse
     {
-        $user = $this->userRepository->findById($id);
-        $this->userRepository->delete($user);
+        try {
+            $user = $this->userRepository->findById($id);
+            $this->userRepository->delete($user);
+            return ApiResponse::success(
+                null,
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 }
