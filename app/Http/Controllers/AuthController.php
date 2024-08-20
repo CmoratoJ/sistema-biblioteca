@@ -15,6 +15,26 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+    /**
+     * @OA\Post(
+     *   tags={"Auth"},
+     *   path="/login",
+     *   summary="Realiza autenticação",
+     *   description="Realizar autenticação",
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="email", type="string"),
+     *       @OA\Property(property="password", type="string")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *   )
+     * )
+     */
     public function store(Request $request): JsonResponse|array
     {
         $credentials = $request->only('email', 'password');
