@@ -2,45 +2,28 @@
 
 namespace App\Http\Services;
 
-use App\Http\Repositories\Interface\IUserRepository;
-use App\Http\Requests\CreateOrUpdateUserRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Repositories\Interface\IBookRepository;
+use App\Http\Requests\CreateOrUpdateBookRequest;
+use App\Http\Resources\BookResource;
 use App\Http\Responses\ApiResponse;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
-class UserService
+class BookService
 {
-    private IUserRepository $userRepository;
-    public function __construct(IUserRepository $userRepository)
+    private  IBookRepository $bookRepository;
+    public function __construct(IBookRepository $bookRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->bookRepository = $bookRepository;
     }
 
-    public function create(CreateOrUpdateUserRequest $request): JsonResponse
+    public function findAll(): JsonResponse
     {
         try {
-            $user = $this->userRepository->persist($request);
+            $books = $this->bookRepository->findAll();
             return ApiResponse::success(
-                new UserResource($user),
-                'success',
-                200
-            );
-        } catch (ModelNotFoundException $e) {
-            return ApiResponse::error($e->getMessage(), 404);
-        } catch (Exception $e) {
-            return ApiResponse::error($e->getMessage(), 500);
-        }
-
-    }
-
-    public function findAll(): object
-    {
-        try {
-            $users = $this->userRepository->findAll();
-            return ApiResponse::success(
-                UserResource::collection($users),
+                BookResource::collection($books),
                 'success',
                 200
             );
@@ -51,12 +34,12 @@ class UserService
         }
     }
 
-    public function findById(int $id): object
+    public function findById(int $id): JsonResponse
     {
         try {
-            $user = $this->userRepository->findById($id);
-            return  ApiResponse::success(
-                new UserResource($user),
+            $book = $this->bookRepository->findById($id);
+            return ApiResponse::success(
+                new BookResource($book),
                 'success',
                 200
             );
@@ -65,15 +48,30 @@ class UserService
         } catch (Exception $e) {
             return ApiResponse::error($e->getMessage(), 500);
         }
-
     }
 
-    public function update(CreateOrUpdateUserRequest $request, int $id): JsonResponse
+    public function create(CreateOrUpdateBookRequest $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->persist($request, $id);
+            $book = $this->bookRepository->persist($request);
             return ApiResponse::success(
-                new UserResource($user),
+                new BookResource($book),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
+    }
+
+    public function update(CreateOrUpdateBookRequest $request, int $id): JsonResponse
+    {
+        try {
+            $book = $this->bookRepository->persist($request, $id);
+            return ApiResponse::success(
+                new BookResource($book),
                 'success',
                 200
             );
@@ -87,8 +85,8 @@ class UserService
     public function delete(int $id): JsonResponse
     {
         try {
-            $user = $this->userRepository->findById($id);
-            $this->userRepository->delete($user);
+            $book = $this->bookRepository->findById($id);
+            $this->bookRepository->delete($book);
             return ApiResponse::success(
                 null,
                 'success',

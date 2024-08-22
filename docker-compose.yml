@@ -5,9 +5,15 @@ services:
     container_name: nginx-bamaq
     ports:
       - 8000:80
+    environment:
+        REDIS_HOST: cache
+        REDIS_PORT: 6379
+        REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - ./:/usr/share/nginx/html
     restart: always
+    depends_on:
+        - cache
     networks:
       - bamaq
 
@@ -26,6 +32,19 @@ services:
     networks:
       - bamaq
 
+  cache:
+      image: redis:7.4-alpine
+      restart: always
+      ports:
+        - '6379:6379'
+      command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      volumes:
+        - cache:/data
+      networks:
+        - bamaq
+volumes:
+    cache:
+        driver: local
 networks:
   bamaq:
     driver: bridge

@@ -16,6 +16,12 @@ class AppServiceProvider extends ServiceProvider
             'App\Http\Repositories\Interface\IUserRepository',
             'App\Http\Repositories\UserRepository'
         );
+
+        //BOOK
+        $this->app->bind(
+            'App\Http\Repositories\Interface\IBookRepository',
+            'App\Http\Repositories\BookRepository'
+        );
     }
 
     /**
