@@ -11,6 +11,7 @@ class Author extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = ['name'];
     public function books(): BelongsToMany
     {
         return $this->belongsToMany(Book::class);

@@ -3,15 +3,30 @@
 namespace App\Http\Repositories;
 
 use App\Http\Repositories\Interface\IUserRepository;
+use App\Http\Requests\CreateOrUpdateUserRequest;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class UserRepository implements IUserRepository
 {
 
-    public function persist(User $user): User
+    public function persist(CreateOrUpdateUserRequest $request, int $id = null): User
     {
+        Cache::forget('all_users');
+
+        $user = new User();
+
+        if ($id) {
+            $user = $this->findById($id);
+        }
+
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
+        $user->password = bcrypt($request->get('password'));
+
         $user->save();
+
         return $user;
     }
 
@@ -22,11 +37,12 @@ class UserRepository implements IUserRepository
 
     public function findAll(): Collection
     {
-        return User::all();
+        return Cache::remember('all_users', 3600, fn () => User::all());
     }
 
     public function delete(User $user): void
     {
+        Cache::forget('all_users');
         $user->delete();
     }
 }

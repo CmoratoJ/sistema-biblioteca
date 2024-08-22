@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateOrUpdateUserRequest;
-use App\Http\Services\UserService;
+use App\Http\Requests\CreateOrUpdateBookRequest;
+use App\Http\Services\BookService;
 use Illuminate\Http\JsonResponse;
 
-class UserController extends Controller
+class BookController extends Controller
 {
-    private UserService $userService;
-    public function __construct(UserService $userService)
+    private BookService $bookService;
+
+    public function __construct(BookService $bookService)
     {
-        $this->userService = $userService;
+        $this->bookService = $bookService;
     }
 
     /**
      * @OA\Get(
-     *   tags={"Users"},
-     *   path="/users",
-     *   summary="Busca todos os usuários",
-     *   description="Buscar todos os usuários cadastrados",
+     *   tags={"Books"},
+     *   path="/books",
+     *   summary="Busca todos os livros",
+     *   description="Buscar todos os livros cadastrados",
      *   security={{"bearerAuth": {}}},
      *   @OA\Response(
      *     response=200,
@@ -37,18 +38,18 @@ class UserController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->userService->findAll();
+        return $this->bookService->findAll();
     }
 
     /**
      * @OA\Get(
-     *   tags={"Users"},
-     *   path="/users/{id}",
-     *   summary="Busca usuário pelo id",
-     *   description="Buscar usuário cadastrado pelo id",
+     *   tags={"Books"},
+     *   path="/books/{id}",
+     *   summary="Busca livro pelo id",
+     *   description="Buscar livro cadastrado pelo id",
      *   security={{"bearerAuth": {}}},
      *   @OA\Parameter(
-     *     description="Id do usuário",
+     *     description="Id do livro",
      *     in="path",
      *     name="id",
      *     required=true,
@@ -73,22 +74,27 @@ class UserController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        return $this->userService->findById($id);
+        return $this->bookService->findById($id);
     }
 
     /**
      * @OA\Post(
-     *   tags={"Users"},
-     *   path="/users",
-     *   summary="Cadastra um novo usuário",
-     *   description="Cadastrar usuário",
+     *   tags={"Books"},
+     *   path="/books",
+     *   summary="Cadastra um novo livro",
+     *   description="Cadastrar livro",
+     *     security={{"bearerAuth": {}}},
      *   @OA\RequestBody(
      *     required=true,
      *     @OA\JsonContent(
      *       type="object",
-     *       @OA\Property(property="name", type="string"),
-     *       @OA\Property(property="email", type="string"),
-     *       @OA\Property(property="password", type="string"),
+     *       @OA\Property(property="title", type="string"),
+     *       @OA\Property(property="publication_year", type="integer"),
+     *       @OA\Property(property="authors", type="array",
+     *          @OA\Items(
+     *              @OA\Property(property="author_id",type="integer")
+     *          )
+     *       ),
      *     )
      *   ),
      *   @OA\Response(
@@ -105,20 +111,20 @@ class UserController extends Controller
      *   )
      * )
      */
-    public function store(CreateOrUpdateUserRequest $request): JsonResponse
+    public function store(CreateOrUpdateBookRequest $request): JsonResponse
     {
-        return $this->userService->create($request);
+        return $this->bookService->create($request);
     }
 
     /**
      * @OA\Put(
-     *   tags={"Users"},
-     *   path="/users/{id}",
-     *   summary="Altera usuário pelo id",
-     *   description="Alterar usuário pelo id",
+     *   tags={"Books"},
+     *   path="/books/{id}",
+     *   summary="Altera livro pelo id",
+     *   description="Alterar livro pelo id",
      *   security={{"bearerAuth": {}}},
      *   @OA\Parameter(
-     *     description="Id do usuário",
+     *     description="Id do livro",
      *     in="path",
      *     name="id",
      *     required=true,
@@ -131,9 +137,13 @@ class UserController extends Controller
      *     required=true,
      *     @OA\JsonContent(
      *       type="object",
-     *       @OA\Property(property="name", type="string"),
-     *       @OA\Property(property="email", type="string"),
-     *       @OA\Property(property="password", type="string"),
+     *       @OA\Property(property="title", type="string"),
+     *       @OA\Property(property="publication_year", type="integer"),
+     *       @OA\Property(property="authors", type="array",
+     *           @OA\Items(
+     *               @OA\Property(property="author_id",type="integer")
+     *           )
+     *       ),
      *     )
      *   ),
      *   @OA\Response(
@@ -154,20 +164,20 @@ class UserController extends Controller
      *   )
      * )
      */
-    public function update(CreateOrUpdateUserRequest $request, int $id): JsonResponse
+    public function update(CreateOrUpdateBookRequest $request, int $id): JsonResponse
     {
-        return $this->userService->update($request, $id);
+        return $this->bookService->update($request, $id);
     }
 
     /**
      * @OA\Delete(
-     *   tags={"Users"},
-     *   path="/users/{id}",
-     *   summary="Deleta usuário pelo id",
-     *   description="Deletar usuário pelo id",
+     *   tags={"Books"},
+     *   path="/books/{id}",
+     *   summary="Deleta livro pelo id",
+     *   description="Deletar livro pelo id",
      *   security={{"bearerAuth": {}}},
      *   @OA\Parameter(
-     *     description="Id do usuário",
+     *     description="Id do livro",
      *     in="path",
      *     name="id",
      *     required=true,
@@ -192,6 +202,6 @@ class UserController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->userService->delete($id);
+        return $this->bookService->delete($id);
     }
 }
