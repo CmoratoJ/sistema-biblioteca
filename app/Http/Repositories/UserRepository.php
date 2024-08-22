@@ -14,19 +14,9 @@ class UserRepository implements IUserRepository
     public function persist(CreateOrUpdateUserRequest $request, int $id = null): User
     {
         Cache::forget('all_users');
-
-        $user = new User();
-
-        if ($id) {
-            $user = $this->findById($id);
-        }
-
-        $user->name = $request->get('name');
-        $user->email = $request->get('email');
-        $user->password = bcrypt($request->get('password'));
-
+        $user = $id ? User::find($id) : new User();
+        $user->fill($request->all());
         $user->save();
-
         return $user;
     }
 
