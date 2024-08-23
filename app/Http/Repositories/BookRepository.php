@@ -3,7 +3,6 @@
 namespace App\Http\Repositories;
 
 use App\Http\Repositories\Interface\IBookRepository;
-use App\Http\Requests\CreateOrUpdateBookRequest;
 use App\Models\Book;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -11,19 +10,20 @@ use Illuminate\Support\Facades\Cache;
 class BookRepository implements IBookRepository
 {
 
-    public function persist(CreateOrUpdateBookRequest $request, int $id = null): Book
+    public function persist(array $data, array $authors): Book
     {
         Cache::forget('all_books');
+        $book = Book::create($data);
+        $book->authors()->attach($authors);
+        return $book;
+    }
 
-        if (is_null($id)) {
-            $book = Book::create($request->only('title', 'publication_year'));
-            $book->authors()->attach($request->input('authors'));
-            return $book;
-        }
-
+    public function update(array $data, array $authors, int $id): Book
+    {
+        Cache::forget('all_books');
         $book = $this->findById($id);
-        $book->update($request->only('title', 'publication_year'));
-        $book->authors()->sync($request->input('authors'));
+        $book->update($data);
+        $book->authors()->sync($authors);
         return $book;
     }
 

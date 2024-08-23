@@ -113,7 +113,9 @@ class BookController extends Controller
      */
     public function store(CreateOrUpdateBookRequest $request): JsonResponse
     {
-        return $this->bookService->create($request);
+        $data = $request->only('title', 'publication_year');
+        $authors = $request->input('authors');
+        return $this->bookService->create($data, $authors);
     }
 
     /**
@@ -166,7 +168,9 @@ class BookController extends Controller
      */
     public function update(CreateOrUpdateBookRequest $request, int $id): JsonResponse
     {
-        return $this->bookService->update($request, $id);
+        $data = $request->only('title', 'publication_year');
+        $authors = $request->input('authors');
+        return $this->bookService->update($data, $authors, $id);
     }
 
     /**

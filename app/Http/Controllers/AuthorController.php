@@ -108,7 +108,7 @@ class AuthorController extends Controller
      */
     public function store(CreateOrUpdateAuthorRequest $request): JsonResponse
     {
-        return $this->authorService->create($request);
+        return $this->authorService->create($request->toArray());
     }
 
     /**
@@ -152,7 +152,7 @@ class AuthorController extends Controller
      */
     public function update(CreateOrUpdateAuthorRequest $request, int $id): JsonResponse
     {
-        return $this->authorService->update($request, $id);
+        return $this->authorService->update($request->toArray(), $id);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class CreateOrUpdateBookRequest extends ApiFormRequest
+class UpdateLoanRequest extends ApiFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,10 +20,7 @@ class CreateOrUpdateBookRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required',
-            'publication_year' => 'required|integer',
-            'authors' => 'required|array',
-            'authors.*.author_id' => 'required|exists:authors,id'
+            'return_date' => 'required|date|after_or_equal:loan_date'
         ];
     }
 }
