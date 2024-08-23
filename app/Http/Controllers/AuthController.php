@@ -37,7 +37,6 @@ class AuthController extends Controller
      */
     public function store(Request $request): JsonResponse|array
     {
-        $credentials = $request->only('email', 'password');
-        return $this->authService->login($credentials);
+        return $this->authService->login($request->only('email', 'password'));
     }
 }

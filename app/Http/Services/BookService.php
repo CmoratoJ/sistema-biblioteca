@@ -3,7 +3,6 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\Interface\IBookRepository;
-use App\Http\Requests\CreateOrUpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Http\Responses\ApiResponse;
 use Exception;
@@ -12,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class BookService
 {
-    private  IBookRepository $bookRepository;
+    private IBookRepository $bookRepository;
     public function __construct(IBookRepository $bookRepository)
     {
         $this->bookRepository = $bookRepository;
@@ -50,10 +49,10 @@ class BookService
         }
     }
 
-    public function create(CreateOrUpdateBookRequest $request): JsonResponse
+    public function create(array $data, array $authors): JsonResponse
     {
         try {
-            $book = $this->bookRepository->persist($request);
+            $book = $this->bookRepository->persist($data, $authors);
             return ApiResponse::success(
                 new BookResource($book),
                 'success',
@@ -66,10 +65,10 @@ class BookService
         }
     }
 
-    public function update(CreateOrUpdateBookRequest $request, int $id): JsonResponse
+    public function update(array $data, array $authors, int $id): JsonResponse
     {
         try {
-            $book = $this->bookRepository->persist($request, $id);
+            $book = $this->bookRepository->update($data, $authors, $id);
             return ApiResponse::success(
                 new BookResource($book),
                 'success',

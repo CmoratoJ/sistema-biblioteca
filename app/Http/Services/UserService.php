@@ -3,7 +3,6 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\Interface\IUserRepository;
-use App\Http\Requests\CreateOrUpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiResponse;
 use Exception;
@@ -18,7 +17,7 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function create(CreateOrUpdateUserRequest $request): JsonResponse
+    public function create(array $request): JsonResponse
     {
         try {
             $user = $this->userRepository->persist($request);
@@ -32,7 +31,6 @@ class UserService
         } catch (Exception $e) {
             return ApiResponse::error($e->getMessage(), 500);
         }
-
     }
 
     public function findAll(): object
@@ -68,10 +66,10 @@ class UserService
 
     }
 
-    public function update(CreateOrUpdateUserRequest $request, int $id): JsonResponse
+    public function update(array $data, int $id): JsonResponse
     {
         try {
-            $user = $this->userRepository->persist($request, $id);
+            $user = $this->userRepository->persist($data, $id);
             return ApiResponse::success(
                 new UserResource($user),
                 'success',

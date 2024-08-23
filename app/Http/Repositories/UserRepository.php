@@ -3,7 +3,6 @@
 namespace App\Http\Repositories;
 
 use App\Http\Repositories\Interface\IUserRepository;
-use App\Http\Requests\CreateOrUpdateUserRequest;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -11,11 +10,11 @@ use Illuminate\Support\Facades\Cache;
 class UserRepository implements IUserRepository
 {
 
-    public function persist(CreateOrUpdateUserRequest $request, int $id = null): User
+    public function persist(array $data, int $id = null): User
     {
         Cache::forget('all_users');
         $user = $id ? User::find($id) : new User();
-        $user->fill($request->all());
+        $user->fill($data);
         $user->save();
         return $user;
     }

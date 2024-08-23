@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 interface IUserRepository
 {
-    public function persist(CreateOrUpdateUserRequest $request, int $id = null): User;
+    public function persist(array $data, int $id = null): User;
     public function findById(int $id): User;
     public function findAll(): Collection;
     public function delete(User $user): void;

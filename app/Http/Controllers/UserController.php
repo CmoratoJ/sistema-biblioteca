@@ -107,7 +107,7 @@ class UserController extends Controller
      */
     public function store(CreateOrUpdateUserRequest $request): JsonResponse
     {
-        return $this->userService->create($request);
+        return $this->userService->create($request->toArray());
     }
 
     /**
@@ -156,7 +156,7 @@ class UserController extends Controller
      */
     public function update(CreateOrUpdateUserRequest $request, int $id): JsonResponse
     {
-        return $this->userService->update($request, $id);
+        return $this->userService->update($request->toArray(), $id);
     }
 
     /**

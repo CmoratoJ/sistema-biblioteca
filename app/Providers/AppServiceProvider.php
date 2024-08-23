@@ -28,6 +28,12 @@ class AppServiceProvider extends ServiceProvider
             'App\Http\Repositories\Interface\IAuthorRepository',
             'App\Http\Repositories\AuthorRepository'
         );
+
+        //LOAN
+        $this->app->bind(
+            'App\Http\Repositories\Interface\ILoanRepository',
+            'App\Http\Repositories\LoanRepository'
+        );
     }
 
     /**
