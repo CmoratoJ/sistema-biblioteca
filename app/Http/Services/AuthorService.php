@@ -5,9 +5,11 @@ namespace App\Http\Services;
 use App\Http\Repositories\Interface\IAuthorRepository;
 use App\Http\Resources\AuthorResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Author;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class AuthorService
 {
@@ -18,84 +20,29 @@ class AuthorService
         $this->authorRepository = $authorRepository;
     }
 
-    public function findAll(): JsonResponse
+    public function findAll(): Collection
     {
-        try {
-            $authors = $this->authorRepository->findAll();
-            return ApiResponse::success(
-                AuthorResource::collection($authors),
-                'success',
-                200
-            );
-        } catch (ModelNotFoundException $e) {
-            return ApiResponse::error($e->getMessage(), 404);
-        } catch (Exception $e) {
-            return ApiResponse::error($e->getMessage(), 500);
-        }
+        return $this->authorRepository->findAll();
     }
 
-    public function findById(int $id): JsonResponse
+    public function findById(int $id): Author
     {
-        try {
-            $author = $this->authorRepository->findById($id);
-            return ApiResponse::success(
-                new AuthorResource($author),
-                'success',
-                200
-            );
-        } catch (ModelNotFoundException $e) {
-            return ApiResponse::error($e->getMessage(), 404);
-        } catch (Exception $e) {
-            return ApiResponse::error($e->getMessage(), 500);
-        }
+        return $this->authorRepository->findById($id);
     }
 
-    public function delete(int $id): JsonResponse
+    public function delete(int $id): void
     {
-        try {
-            $author = $this->authorRepository->findById($id);
-            $this->authorRepository->delete($author);
-            return ApiResponse::success(
-                null,
-                'success',
-                200
-            );
-        } catch (ModelNotFoundException $e) {
-            return ApiResponse::error($e->getMessage(), 404);
-        } catch (Exception $e) {
-            return ApiResponse::error($e->getMessage(), 500);
-        }
+        $author = $this->authorRepository->findById($id);
+        $this->authorRepository->delete($author);
     }
 
-    public function create(array $data): JsonResponse
+    public function create(array $data): Author
     {
-        try {
-            $author = $this->authorRepository->persist($data);
-            return ApiResponse::success(
-                new AuthorResource($author),
-                'success',
-                200
-            );
-        } catch (ModelNotFoundException $e) {
-            return ApiResponse::error($e->getMessage(), 404);
-        } catch (Exception $e) {
-            return ApiResponse::error($e->getMessage(), 500);
-        }
+        return $this->authorRepository->persist($data);
     }
 
-    public function update(array $data, int $id): JsonResponse
+    public function update(array $data, int $id): Author
     {
-        try {
-            $author = $this->authorRepository->persist($data, $id);
-            return ApiResponse::success(
-                new AuthorResource($author),
-                'success',
-                200
-            );
-        } catch (ModelNotFoundException $e) {
-            return ApiResponse::error($e->getMessage(), 404);
-        } catch (Exception $e) {
-            return ApiResponse::error($e->getMessage(), 500);
-        }
+        return $this->authorRepository->persist($data, $id);
     }
 }
