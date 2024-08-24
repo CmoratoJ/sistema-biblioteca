@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Responses\ApiResponse;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class AuthService
@@ -10,14 +11,14 @@ class AuthService
     public function login (array $credentials): JsonResponse|array
     {
         if (!$token = auth()->setTTL(6 * 60)->attempt($credentials)) {
-            return ApiResponse::error('Not Authorized', 401);
+            throw new Exception('Unauthorized.', 401);
         }
 
-        return ApiResponse::success([
+        return [
             'access_token' => $token,
             'token_type' => 'Bearer',
             'expires_in' => auth()->factory()->getTTL(),
             'user' => auth()->user(),
-        ], 'success', 200);
+        ];
     }
 }

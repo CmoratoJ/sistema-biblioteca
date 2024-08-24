@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrUpdateAuthorRequest;
+use App\Http\Resources\AuthorResource;
+use App\Http\Responses\ApiResponse;
 use App\Http\Services\AuthorService;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class AuthorController extends Controller
@@ -38,7 +42,18 @@ class AuthorController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->authorService->findAll();
+        try {
+            $authors = $this->authorService->findAll();
+            return ApiResponse::success(
+                AuthorResource::collection($authors),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -71,7 +86,18 @@ class AuthorController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        return $this->authorService->findById($id);
+        try {
+            $author = $this->authorService->findById($id);
+            return ApiResponse::success(
+                new AuthorResource($author),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -108,7 +134,18 @@ class AuthorController extends Controller
      */
     public function store(CreateOrUpdateAuthorRequest $request): JsonResponse
     {
-        return $this->authorService->create($request->toArray());
+        try {
+            $author = $this->authorService->create($request->toArray());
+            return ApiResponse::success(
+                new AuthorResource($author),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -152,7 +189,18 @@ class AuthorController extends Controller
      */
     public function update(CreateOrUpdateAuthorRequest $request, int $id): JsonResponse
     {
-        return $this->authorService->update($request->toArray(), $id);
+        try {
+            $author = $this->authorService->update($request->toArray(), $id);
+            return ApiResponse::success(
+                new AuthorResource($author),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -185,6 +233,17 @@ class AuthorController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->authorService->delete($id);
+        try {
+            $this->authorService->delete($id);
+            return ApiResponse::success(
+                null,
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 }

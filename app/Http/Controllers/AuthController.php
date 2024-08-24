@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ApiResponse;
 use App\Http\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,6 +38,11 @@ class AuthController extends Controller
      */
     public function store(Request $request): JsonResponse|array
     {
-        return $this->authService->login($request->only('email', 'password'));
+        $auth = $this->authService->login($request->only('email', 'password'));
+        return ApiResponse::success(
+            $auth,
+            'success',
+            200
+        );
     }
 }

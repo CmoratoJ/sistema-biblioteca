@@ -495,9 +495,6 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "user_id": {
-                                        "type": "integer"
-                                    },
                                     "book_id": {
                                         "type": "integer"
                                     },

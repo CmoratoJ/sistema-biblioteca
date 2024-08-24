@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrUpdateUserRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Responses\ApiResponse;
 use App\Http\Services\UserService;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -37,7 +41,18 @@ class UserController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->userService->findAll();
+        try {
+            $users = $this->userService->findAll();
+            return ApiResponse::success(
+                UserResource::collection($users),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -73,7 +88,18 @@ class UserController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        return $this->userService->findById($id);
+        try {
+            $user = $this->userService->findById($id);
+            return  ApiResponse::success(
+                new UserResource($user),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -107,7 +133,18 @@ class UserController extends Controller
      */
     public function store(CreateOrUpdateUserRequest $request): JsonResponse
     {
-        return $this->userService->create($request->toArray());
+        try {
+            $user = $this->userService->create($request->toArray());
+            return ApiResponse::success(
+                new UserResource($user),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -156,7 +193,18 @@ class UserController extends Controller
      */
     public function update(CreateOrUpdateUserRequest $request, int $id): JsonResponse
     {
-        return $this->userService->update($request->toArray(), $id);
+        try {
+            $user = $this->userService->update($request->toArray(), $id);
+            return ApiResponse::success(
+                new UserResource($user),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -192,6 +240,17 @@ class UserController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->userService->delete($id);
+        try {
+            $this->userService->delete($id);
+            return ApiResponse::success(
+                null,
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 }
