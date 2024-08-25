@@ -44,11 +44,7 @@ class AuthorController extends Controller
     {
         try {
             $authors = $this->authorService->findAll();
-            return ApiResponse::success(
-                AuthorResource::collection($authors),
-                'success',
-                200
-            );
+            return ApiResponse::success(AuthorResource::collection($authors), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -88,11 +84,7 @@ class AuthorController extends Controller
     {
         try {
             $author = $this->authorService->findById($id);
-            return ApiResponse::success(
-                new AuthorResource($author),
-                'success',
-                200
-            );
+            return ApiResponse::success(new AuthorResource($author), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -136,11 +128,7 @@ class AuthorController extends Controller
     {
         try {
             $author = $this->authorService->create($request->toArray());
-            return ApiResponse::success(
-                new AuthorResource($author),
-                'success',
-                200
-            );
+            return ApiResponse::success(new AuthorResource($author), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -191,11 +179,7 @@ class AuthorController extends Controller
     {
         try {
             $author = $this->authorService->update($request->toArray(), $id);
-            return ApiResponse::success(
-                new AuthorResource($author),
-                'success',
-                200
-            );
+            return ApiResponse::success(new AuthorResource($author), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -235,11 +219,7 @@ class AuthorController extends Controller
     {
         try {
             $this->authorService->delete($id);
-            return ApiResponse::success(
-                null,
-                'success',
-                200
-            );
+            return ApiResponse::success(null, 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {

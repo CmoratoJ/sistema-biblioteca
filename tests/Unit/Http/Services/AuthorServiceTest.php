@@ -38,7 +38,9 @@ class AuthorServiceTest extends TestCase
         $authorJohn = new Author($john);
         $authorJane = new Author($jane);
 
-        $this->authorRepository->method('findAll')->willReturn(new Collection([$authorJohn, $authorJane]));
+        $this->authorRepository->method('findAll')->willReturn(
+            new Collection([$authorJohn, $authorJane])
+        );
         $authors = $this->authorService->findAll();
 
         $this->assertInstanceOf(Collection::class, $authors);

@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateLoanRequest;
 use App\Http\Requests\UpdateLoanRequest;
+use App\Http\Resources\LoanResource;
+use App\Http\Responses\ApiResponse;
 use App\Http\Services\LoanService;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class LoanController extends Controller
@@ -38,7 +42,18 @@ class LoanController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->loanService->findAll();
+        try {
+            $loans = $this->loanService->findAll();
+            return ApiResponse::success(
+                LoanResource::collection($loans),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -77,7 +92,18 @@ class LoanController extends Controller
      */
     public function store(CreateLoanRequest $request): JsonResponse
     {
-        return $this->loanService->persist($request->toArray());
+        try {
+            $loan = $this->loanService->create($request->toArray());
+            return ApiResponse::success(
+                new LoanResource($loan),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -120,7 +146,18 @@ class LoanController extends Controller
      */
     public function update(UpdateLoanRequest $request, int $id): JsonResponse
     {
-        return $this->loanService->update($request->toArray(), $id);
+        try {
+            $loan = $this->loanService->update($request->toArray(), $id);
+            return ApiResponse::success(
+                new LoanResource($loan),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -146,6 +183,17 @@ class LoanController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->loanService->delete($id);
+        try {
+            $this->loanService->delete($id);
+            return ApiResponse::success(
+                null,
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 }

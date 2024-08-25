@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrUpdateBookRequest;
+use App\Http\Resources\BookResource;
+use App\Http\Responses\ApiResponse;
 use App\Http\Services\BookService;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class BookController extends Controller
@@ -38,7 +42,18 @@ class BookController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->bookService->findAll();
+        try {
+            $books = $this->bookService->findAll();
+            return ApiResponse::success(
+                BookResource::collection($books),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -74,7 +89,18 @@ class BookController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        return $this->bookService->findById($id);
+        try {
+            $book = $this->bookService->findById($id);
+            return ApiResponse::success(
+                new BookResource($book),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -113,9 +139,20 @@ class BookController extends Controller
      */
     public function store(CreateOrUpdateBookRequest $request): JsonResponse
     {
-        $data = $request->only('title', 'publication_year');
-        $authors = $request->input('authors');
-        return $this->bookService->create($data, $authors);
+        try {
+            $data = $request->only('title', 'publication_year');
+            $authors = $request->input('authors');
+            $book = $this->bookService->create($data, $authors);
+            return ApiResponse::success(
+                new BookResource($book),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -168,9 +205,20 @@ class BookController extends Controller
      */
     public function update(CreateOrUpdateBookRequest $request, int $id): JsonResponse
     {
-        $data = $request->only('title', 'publication_year');
-        $authors = $request->input('authors');
-        return $this->bookService->update($data, $authors, $id);
+        try {
+            $data = $request->only('title', 'publication_year');
+            $authors = $request->input('authors');
+            $book = $this->bookService->update($data, $authors, $id);
+            return ApiResponse::success(
+                new BookResource($book),
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -206,6 +254,17 @@ class BookController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->bookService->delete($id);
+        try {
+            $this->bookService->delete($id);
+            return ApiResponse::success(
+                null,
+                'success',
+                200
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error($e->getMessage(), 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 500);
+        }
     }
 }
