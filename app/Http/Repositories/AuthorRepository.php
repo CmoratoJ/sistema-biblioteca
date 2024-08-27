@@ -37,6 +37,7 @@ class AuthorRepository implements IAuthorRepository
     public function delete(Author $author): void
     {
         Cache::forget('all_authors');
+        Cache::forget('all_books');
         $author->delete();
     }
 }

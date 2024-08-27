@@ -5,12 +5,14 @@ namespace App\Http\Repositories;
 use App\Http\Repositories\Interface\ILoanRepository;
 use App\Models\Loan;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class LoanRepository implements ILoanRepository
 {
 
     public function persist(array $data): Loan
     {
+        Cache::forget('all_loans');
         return Loan::create([
             'user_id' => auth()->user()->id,
             'book_id' => $data['book_id'],
@@ -21,6 +23,7 @@ class LoanRepository implements ILoanRepository
 
     public function update(array $data, int $id): Loan
     {
+        Cache::forget('all_loans');
         $loan = Loan::findOrFail($id);
         $loan->update([
             'return_date' => $data['return_date'],
@@ -30,17 +33,22 @@ class LoanRepository implements ILoanRepository
 
     public function findAll(): Collection
     {
-        return Loan::with(['user', 'book'])->whereNull('return_date')->get();
+        return  Cache::remember('all_loans', 3600, fn () => Loan::with(['user', 'book'])->whereNull('return_date')->get());
     }
 
     public function delete(int $id): void
     {
+        Cache::forget('all_loans');
         $loan = Loan::findOrFail($id);
         $loan->delete();
     }
 
     public function isBookLoaned(int $bookId): bool
     {
+        if (Cache::has('all_loans')) {
+            return Cache::get('all_loans')->where('book_id', $bookId)->whereNull('return_date')->exists();
+        }
+
         return Loan::where('book_id', $bookId)->whereNull('return_date')->exists();
     }
 }

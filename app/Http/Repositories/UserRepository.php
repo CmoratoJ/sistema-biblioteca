@@ -21,6 +21,10 @@ class UserRepository implements IUserRepository
 
     public function findById(int $id): User
     {
+        if (Cache::has('all_users')) {
+            return Cache::get('all_users')->firstWhere('id', $id);
+        }
+
         return User::findOrFail($id);
     }
 
