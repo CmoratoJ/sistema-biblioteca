@@ -26,7 +26,7 @@ cd sistema-biblioteca/
 ```
 cp .env.example .env
 ```
-- Dentro do arquivo .env informe as credenciais para envio de email:
+- Dentro do arquivo .env informe as credenciais para envio de email e as informações do banco de dados:
 ```
 MAIL_MAILER=smtp
 MAIL_HOST=seu host
@@ -36,6 +36,14 @@ MAIL_PASSWORD=sua senha
 MAIL_ENCRYPTION=null
 MAIL_FROM_ADDRESS="seu endereço de email"
 MAIL_FROM_NAME="${APP_NAME}"
+```
+```
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=bamaq
+DB_USERNAME=bamaq
+DB_PASSWORD=bamaq
 ```
 - O projeto roda utilizando o docker portanto certifique-se de tê-lo instalado:
 
