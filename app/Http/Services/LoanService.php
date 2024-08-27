@@ -2,17 +2,22 @@
 
 namespace App\Http\Services;
 
+use App\Http\Repositories\Interface\IBookRepository;
 use App\Http\Repositories\Interface\ILoanRepository;
 use App\Models\Loan;
+use App\Notifications\UserNotification;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 
 class LoanService
 {
     private ILoanRepository $loanRepository;
-    public function __construct(ILoanRepository $loanRepository)
+    private IBookRepository $bookRepository;
+    public function __construct(ILoanRepository $loanRepository, IBookRepository $bookRepository)
     {
         $this->loanRepository = $loanRepository;
+        $this->bookRepository = $bookRepository;
     }
 
     public function findAll(): Collection
@@ -26,7 +31,11 @@ class LoanService
             throw new Exception('Book already loaned', 400);
         }
 
-        return $this->loanRepository->persist($data);
+        $loan = $this->loanRepository->persist($data);
+        $book = $this->bookRepository->findById($loan->book_id);
+        Notification::send(auth()->user(), new UserNotification($loan, $book));
+
+        return $loan;
     }
 
     public function update(array $data, int $id): Loan

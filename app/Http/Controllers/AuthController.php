@@ -39,10 +39,6 @@ class AuthController extends Controller
     public function store(Request $request): JsonResponse|array
     {
         $auth = $this->authService->login($request->only('email', 'password'));
-        return ApiResponse::success(
-            $auth,
-            'success',
-            200
-        );
+        return ApiResponse::success($auth, 'success', 200);
     }
 }

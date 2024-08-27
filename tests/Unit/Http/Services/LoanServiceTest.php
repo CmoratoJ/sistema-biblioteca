@@ -5,6 +5,7 @@ namespace Http\Services;
 use App\Http\Repositories\Interface\ILoanRepository;
 use App\Http\Services\LoanService;
 use App\Models\Loan;
+use Exception;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
@@ -37,7 +38,25 @@ class LoanServiceTest extends TestCase
         $this->assertEquals($data['loan_date'], $loan->loan_date);
         $this->assertEquals($data['due_date'], $loan->due_date);
         $this->assertEquals($data['return_date'], $loan->return_date);
+    }
 
+    public function testCreateLoanIsBookAlreadyLoaned()
+    {
+        $data = [
+            'book_id' => 1,
+            'user_id' => 1,
+            'loan_date' => '2022-01-01',
+            'due_date' => '2022-01-02',
+            'return_date' => null
+        ];
+
+        $loan = new Loan($data);
+        $this->loanRepository->method('isBookLoaned')->willReturn(true);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Book already loaned');
+
+        $loan = $this->loanService->create($data);
     }
 
     public function testFindAllLoans()

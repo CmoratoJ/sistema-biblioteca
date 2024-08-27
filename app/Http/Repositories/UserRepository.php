@@ -13,7 +13,7 @@ class UserRepository implements IUserRepository
     public function persist(array $data, int $id = null): User
     {
         Cache::forget('all_users');
-        $user = $id ? User::find($id) : new User();
+        $user = $id ? $this->findById($id) : new User();
         $user->fill($data);
         $user->save();
         return $user;
@@ -21,7 +21,7 @@ class UserRepository implements IUserRepository
 
     public function findById(int $id): User
     {
-        return User::find($id);
+        return User::findOrFail($id);
     }
 
     public function findAll(): Collection

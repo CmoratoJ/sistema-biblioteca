@@ -44,11 +44,7 @@ class LoanController extends Controller
     {
         try {
             $loans = $this->loanService->findAll();
-            return ApiResponse::success(
-                LoanResource::collection($loans),
-                'success',
-                200
-            );
+            return ApiResponse::success(LoanResource::collection($loans), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -94,11 +90,7 @@ class LoanController extends Controller
     {
         try {
             $loan = $this->loanService->create($request->toArray());
-            return ApiResponse::success(
-                new LoanResource($loan),
-                'success',
-                200
-            );
+            return ApiResponse::success(new LoanResource($loan), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -148,11 +140,7 @@ class LoanController extends Controller
     {
         try {
             $loan = $this->loanService->update($request->toArray(), $id);
-            return ApiResponse::success(
-                new LoanResource($loan),
-                'success',
-                200
-            );
+            return ApiResponse::success(new LoanResource($loan), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -185,11 +173,7 @@ class LoanController extends Controller
     {
         try {
             $this->loanService->delete($id);
-            return ApiResponse::success(
-                null,
-                'success',
-                200
-            );
+            return ApiResponse::success(null, 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
