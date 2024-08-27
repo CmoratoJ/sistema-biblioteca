@@ -1,11 +1,10 @@
 <?php
 
-namespace Http\Repositories;
+namespace Tests\Feature\Http\Repositories;
 
 use App\Http\Repositories\Interface\IAuthorRepository;
 use App\Http\Repositories\Interface\IBookRepository;
 use App\Models\Book;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;

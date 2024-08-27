@@ -1,6 +1,6 @@
 <?php
 
-namespace Http\Repositories;
+namespace Tests\Feature\Http\Repositories;
 
 use App\Http\Repositories\Interface\IAuthorRepository;
 use App\Http\Repositories\Interface\IBookRepository;
