@@ -5,10 +5,8 @@ namespace App\Http\Services;
 use App\Http\Repositories\Interface\IBookRepository;
 use App\Http\Repositories\Interface\ILoanRepository;
 use App\Models\Loan;
-use App\Notifications\UserNotification;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Notification;
 
 class LoanService
 {
@@ -33,7 +31,7 @@ class LoanService
 
         $loan = $this->loanRepository->persist($data);
         $book = $this->bookRepository->findById($loan->book_id);
-        Notification::send(auth()->user(), new UserNotification($loan, $book));
+        $this->loanRepository->sendNotification($loan, $book);
 
         return $loan;
     }

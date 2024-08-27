@@ -2,6 +2,7 @@
 
 namespace App\Http\Repositories\Interface;
 
+use App\Models\Book;
 use App\Models\Loan;
 use Illuminate\Support\Collection;
 
@@ -15,4 +16,6 @@ interface ILoanRepository
     public function delete(int $id): void;
 
     public function isBookLoaned(int $bookId): bool;
+
+    public function sendNotification(Loan $loan, Book $book): void;
 }

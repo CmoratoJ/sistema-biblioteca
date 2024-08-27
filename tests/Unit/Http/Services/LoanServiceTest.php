@@ -2,25 +2,32 @@
 
 namespace Http\Services;
 
+use App\Http\Repositories\Interface\IBookRepository;
 use App\Http\Repositories\Interface\ILoanRepository;
 use App\Http\Services\LoanService;
+use App\Models\Book;
 use App\Models\Loan;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class LoanServiceTest extends TestCase
 {
     private ILoanRepository $loanRepository;
+    private IBookRepository $bookRepository;
     private LoanService $loanService;
     protected function setUp(): void
     {
         $this->loanRepository = $this->createMock(ILoanRepository::class);
-        $this->loanService = new LoanService($this->loanRepository);
+        $this->bookRepository = $this->createMock(IBookRepository::class);
+        $this->loanService = new LoanService($this->loanRepository, $this->bookRepository);
     }
 
     public function testCreateLoan()
     {
+        Notification::fake();
+
         $data = [
             'book_id' => 1,
             'user_id' => 1,
@@ -30,8 +37,16 @@ class LoanServiceTest extends TestCase
         ];
 
         $loan = new Loan($data);
+        $book = new Book(
+            ['id' => 1, 'title' => 'title', 'publication_year' => 2020]
+        );
+
         $this->loanRepository->method('persist')->willReturn($loan);
+        $this->bookRepository->method('findById')->willReturn($book);
+        $this->loanRepository->method('sendNotification')->with($loan, $book);
+
         $loan = $this->loanService->create($data);
+
         $this->assertInstanceOf(Loan::class, $loan);
         $this->assertEquals($data['book_id'], $loan->book_id);
         $this->assertEquals($data['user_id'], $loan->user_id);

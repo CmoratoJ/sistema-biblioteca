@@ -10,8 +10,10 @@ use App\Http\Services\AuthService;
 use App\Models\Book;
 use App\Models\Loan;
 use App\Models\User;
+use App\Notifications\UserNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class LoanRepositoryTest extends TestCase
@@ -100,5 +102,14 @@ class LoanRepositoryTest extends TestCase
         $isBookLoanedFalse = $this->repository->isBookLoaned($this->book->id + 1);
         $this->assertTrue($isBookLoanedTrue);
         $this->assertFalse($isBookLoanedFalse);
+    }
+
+    public function testSendNotification()
+    {
+        Notification::fake();
+        $dataLoan = ['book_id' => $this->book->id, 'user_id' => $this->user->id, 'loan_date' => '2022-01-01', 'due_date' => '2022-01-02'];
+        $loan = $this->repository->persist($dataLoan);
+        $this->repository->sendNotification($loan, $this->book);
+        Notification::assertSentTo(auth()->user(), UserNotification::class);
     }
 }

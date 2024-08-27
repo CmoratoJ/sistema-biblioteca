@@ -3,9 +3,12 @@
 namespace App\Http\Repositories;
 
 use App\Http\Repositories\Interface\ILoanRepository;
+use App\Models\Book;
 use App\Models\Loan;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
 
 class LoanRepository implements ILoanRepository
 {
@@ -50,5 +53,10 @@ class LoanRepository implements ILoanRepository
         }
 
         return Loan::where('book_id', $bookId)->whereNull('return_date')->exists();
+    }
+
+    public function sendNotification(Loan $loan, Book $book): void
+    {
+        Notification::send(auth()->user(), new UserNotification($loan, $book));
     }
 }
