@@ -67,7 +67,7 @@ php artisan migrate
 ```
 php artisan test
 ```
-- Lembre-se de deixar um "[worker](https://laravel.com/docs/10.x/queues#running-the-queue-worker)" rodando para o envio de e-mail assíncrono 🚨
+- Lembre-se de deixar um "[worker](https://laravel.com/docs/11.x/queues#running-the-queue-worker)" rodando para o envio de e-mail assíncrono 🚨
 ```
 php artisan queue:work
 ```
