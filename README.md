@@ -71,6 +71,13 @@ php artisan jwt:secret
 ```
 php artisan migrate
 ```
+- Rode os comandos a seguir para dar as permissoes necessárias:
+```
+chmod -R gu+w storage
+```
+```
+chmod -R guo+w storage
+```
 - Para executar os testes automatizados basta executar o comando:
 ```
 php artisan test
