@@ -13,6 +13,7 @@ class BookRepository implements IBookRepository
     public function persist(array $data, array $authors): Book
     {
         Cache::forget('all_books');
+        Cache::forget('all_authors');
         $book = Book::create($data);
         $book->authors()->attach($authors);
         return $book;
@@ -21,6 +22,7 @@ class BookRepository implements IBookRepository
     public function update(array $data, array $authors, int $id): Book
     {
         Cache::forget('all_books');
+        Cache::forget('all_authors');
         $book = $this->findById($id);
         $book->update($data);
         $book->authors()->sync($authors);
@@ -29,6 +31,10 @@ class BookRepository implements IBookRepository
 
     public function findById(int $id): Book
     {
+        if (Cache::has('all_books')) {
+            return Cache::get('all_books')->firstWhere('id', $id);
+        }
+
         return Book::with('authors')->findOrFail($id);
     }
 
@@ -40,6 +46,7 @@ class BookRepository implements IBookRepository
     public function delete(Book $book): void
     {
         Cache::forget('all_books');
+        Cache::forget('all_authors');
         $book->delete();
     }
 }
