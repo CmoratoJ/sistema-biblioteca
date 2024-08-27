@@ -14,7 +14,7 @@ class AuthorRepository implements IAuthorRepository
     {
         Cache::forget('all_authors');
 
-        $author = $id ? Author::find($id) : new Author();
+        $author = $id ? Author::findOrFail($id) : new Author();
         $author->fill($data);
         $author->save();
         return $author;
@@ -22,7 +22,11 @@ class AuthorRepository implements IAuthorRepository
 
     public function findById(int $id): ?Author
     {
-        return Author::with('books')->find($id);
+        if (Cache::has('all_authors')) {
+            return Cache::get('all_authors')->firstWhere('id', $id);
+        }
+
+        return Author::with('books')->findOrFail($id);
     }
 
     public function findAll(): Collection

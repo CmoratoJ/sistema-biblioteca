@@ -15,8 +15,8 @@ class CreateOrUpdateUserRequest extends ApiFormRequest
     {
         return [
             'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required'
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
         ];
     }
 }

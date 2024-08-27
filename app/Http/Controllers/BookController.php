@@ -44,11 +44,7 @@ class BookController extends Controller
     {
         try {
             $books = $this->bookService->findAll();
-            return ApiResponse::success(
-                BookResource::collection($books),
-                'success',
-                200
-            );
+            return ApiResponse::success(BookResource::collection($books), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -91,11 +87,7 @@ class BookController extends Controller
     {
         try {
             $book = $this->bookService->findById($id);
-            return ApiResponse::success(
-                new BookResource($book),
-                'success',
-                200
-            );
+            return ApiResponse::success(new BookResource($book), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -143,11 +135,7 @@ class BookController extends Controller
             $data = $request->only('title', 'publication_year');
             $authors = $request->input('authors');
             $book = $this->bookService->create($data, $authors);
-            return ApiResponse::success(
-                new BookResource($book),
-                'success',
-                200
-            );
+            return ApiResponse::success(new BookResource($book), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -209,11 +197,7 @@ class BookController extends Controller
             $data = $request->only('title', 'publication_year');
             $authors = $request->input('authors');
             $book = $this->bookService->update($data, $authors, $id);
-            return ApiResponse::success(
-                new BookResource($book),
-                'success',
-                200
-            );
+            return ApiResponse::success(new BookResource($book), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -256,11 +240,7 @@ class BookController extends Controller
     {
         try {
             $this->bookService->delete($id);
-            return ApiResponse::success(
-                null,
-                'success',
-                200
-            );
+            return ApiResponse::success(null, 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {

@@ -29,7 +29,7 @@ class BookRepository implements IBookRepository
 
     public function findById(int $id): Book
     {
-        return Book::with('authors')->find($id);
+        return Book::with('authors')->findOrFail($id);
     }
 
     public function findAll(): Collection

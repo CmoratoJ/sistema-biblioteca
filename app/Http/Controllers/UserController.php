@@ -43,11 +43,7 @@ class UserController extends Controller
     {
         try {
             $users = $this->userService->findAll();
-            return ApiResponse::success(
-                UserResource::collection($users),
-                'success',
-                200
-            );
+            return ApiResponse::success(UserResource::collection($users), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -90,11 +86,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->findById($id);
-            return  ApiResponse::success(
-                new UserResource($user),
-                'success',
-                200
-            );
+            return  ApiResponse::success(new UserResource($user), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -135,11 +127,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->create($request->toArray());
-            return ApiResponse::success(
-                new UserResource($user),
-                'success',
-                200
-            );
+            return ApiResponse::success(new UserResource($user), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -195,11 +183,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->update($request->toArray(), $id);
-            return ApiResponse::success(
-                new UserResource($user),
-                'success',
-                200
-            );
+            return ApiResponse::success(new UserResource($user), 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
@@ -242,11 +226,7 @@ class UserController extends Controller
     {
         try {
             $this->userService->delete($id);
-            return ApiResponse::success(
-                null,
-                'success',
-                200
-            );
+            return ApiResponse::success(null, 'success', 200);
         } catch (ModelNotFoundException $e) {
             return ApiResponse::error($e->getMessage(), 404);
         } catch (Exception $e) {
